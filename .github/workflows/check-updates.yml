@@ -1,0 +1,101 @@
+name: Check for Plugin Updates
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+jobs:
+  check_airwindows_update:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read current formula data
+        id: read_formula
+        run: |
+          FORMULA_PATH="Formula/airwindows-consolidated.rb"
+          CURRENT_URL=$(grep 'url "' $FORMULA_PATH | awk -F'"' '{print $2}')
+          CURRENT_SHA256=$(grep 'sha256 "' $FORMULA_PATH | awk -F'"' '{print $2}')
+          HOMEPAGE=$(grep 'homepage "' $FORMULA_PATH | awk -F'"' '{print $2}')
+
+          echo "current_url=$CURRENT_URL" >> $GITHUB_OUTPUT
+          echo "current_sha256=$CURRENT_SHA256" >> $GITHUB_OUTPUT
+          echo "homepage=$HOMEPAGE" >> $GITHUB_OUTPUT
+
+      - name: Extract GitHub repo info
+        id: repo_info
+        run: |
+          HOMEPAGE="${{ steps.read_formula.outputs.homepage }}"
+          # Extract owner and repo from homepage URL (e.g., https://github.com/baconpaul/airwin2rack)
+          OWNER=$(echo "$HOMEPAGE" | sed -E 's/https:\/\/github.com\/([^\/]+)\/([^\/]+).*/\1/')
+          REPO=$(echo "$HOMEPAGE" | sed -E 's/https:\/\/github.com\/([^\/]+)\/([^\/]+).*/\2/')
+
+          echo "owner=$OWNER" >> $GITHUB_OUTPUT
+          echo "repo=$REPO" >> $GITHUB_OUTPUT
+
+      - name: Fetch latest GitHub release
+        id: fetch_release
+        run: |
+          OWNER="${{ steps.repo_info.outputs.owner }}"
+          REPO="${{ steps.repo_info.outputs.repo }}"
+          
+          # Fetch latest release data
+          RELEASE_DATA=$(curl -s "https://api.github.com/repos/$OWNER/$REPO/releases/latest")
+          
+          # Extract the DMG asset URL and calculate its SHA256
+          # Assuming the DMG asset name contains "macOS" and ".dmg"
+          NEW_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name | contains("macOS") and endswith(".dmg")) | .browser_download_url')
+          
+          if [ -z "$NEW_URL" ]; then
+            echo "No macOS .dmg asset found in the latest release."
+            echo "new_url=" >> $GITHUB_OUTPUT
+            echo "new_sha256=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Download the new DMG and calculate SHA256
+          TEMP_DMG="/tmp/new_airwindows.dmg"
+          curl -L "$NEW_URL" -o "$TEMP_DMG"
+          NEW_SHA256=$(shasum -a 256 "$TEMP_DMG" | awk '{print $1}')
+
+          echo "new_url=$NEW_URL" >> $GITHUB_OUTPUT
+          echo "new_sha256=$NEW_SHA256" >> $GITHUB_OUTPUT
+
+      - name: Check for update
+        id: check_update
+        run: |
+          CURRENT_URL="${{ steps.read_formula.outputs.current_url }}"
+          CURRENT_SHA256="${{ steps.read_formula.outputs.current_sha256 }}"
+          NEW_URL="${{ steps.fetch_release.outputs.new_url }}"
+          NEW_SHA256="${{ steps.fetch_release.outputs.new_sha256 }}"
+
+          if [ "$NEW_URL" != "$CURRENT_URL" ] || [ "$NEW_SHA256" != "$CURRENT_SHA256" ]; then
+            echo "Update needed!"
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "new_url=$NEW_URL" >> $GITHUB_OUTPUT
+            echo "new_sha256=$NEW_SHA256" >> $GITHUB_OUTPUT
+          else
+            echo "No update needed."
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update formula and create PR
+        if: steps.check_update.outputs.update_needed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update airwindows-consolidated: ${{ steps.check_update.outputs.new_url }}"
+          title: "Update airwindows-consolidated"
+          body: |
+            Automated update for `airwindows-consolidated`.
+            
+            New URL: `${{ steps.check_update.outputs.new_url }}`
+            New SHA256: `${{ steps.check_update.outputs.new_sha256 }}`
+          branch: "auto-update/airwindows-consolidated-$(date +%Y%m%d%H%M%S)"
+          base: main
+          delete-branch-if-exists: true
+          add-paths: Formula/airwindows-consolidated.rb
