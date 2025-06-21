@@ -8,12 +8,10 @@ class AirwindowsConsolidated < Formula
 
   livecheck do
     url :homepage
-    regex(/^DAWPlugin$/i) # Adjust this regex if the release tag format changes
+    regex(/^DAWPlugin$/i)
   end
 
   def install
-    # Extract the main .pkg file from the mounted .dmg
-    # This will create directories like airwindows-consolidated_VST3.pkg, etc.
     system "xar", "-xf", "airwindows-consolidated-macOS-2025-06-21-5ea9f35.pkg"
 
     # Navigate into the extracted VST3 sub-package directory and extract its Payload
@@ -28,3 +26,7 @@ class AirwindowsConsolidated < Formula
     end
   end
 end
+  ## TODO
+  # gh api repos/baconpaul/airwin2rack/releases \
+  # --jq '.[] | select(.assets != null) | .assets[] | select(.name | test("macOS.*dmg$")) | .browser_download_url' \
+  # | head -n1
