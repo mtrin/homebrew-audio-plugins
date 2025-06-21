@@ -1,5 +1,5 @@
 # Formula/airwin2rack.rb
-class Airwin2rack < Formula
+class AirwindowsConsolidated < Formula
   desc "Airwindows Consolidated macOS DAW Plugin"
   homepage "https://github.com/baconpaul/airwin2rack"
   url "https://github.com/baconpaul/airwin2rack/releases/download/DAWPlugin/airwindows-consolidated-macOS-2025-06-21-5ea9f35.dmg"
@@ -10,7 +10,8 @@ class Airwin2rack < Formula
     regex(/^DAWPlugin$/i) # Adjust this regex if the release tag format changes
   end
 
+  pkg "airwindows-consolidated-macOS-2025-06-21-5ea9f35.pkg"
+
   def install
-    system "installer", "-pkg", "airwindows-consolidated-macOS-2025-06-21-5ea9f35.pkg", "-target", "/"
   end
 end
