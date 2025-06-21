@@ -11,26 +11,25 @@ class AirwindowsConsolidated < Formula
   end
 
   def install
-    # Extract the .pkg file from the mounted .dmg
-    # The .dmg is automatically mounted by Homebrew.
-    # The .pkg file is usually in the root of the mounted DMG.
-    # Use `xar` to extract the contents of the .pkg
+    # Extract the main .pkg file from the mounted .dmg
+    # This will create directories like airwindows-consolidated_VST3.pkg, etc.
     system "xar", "-xf", "airwindows-consolidated-macOS-2025-06-21-5ea9f35.pkg"
 
-    # The VST3 plugin is typically located within the extracted package.
-    # We need to find the .vst3 bundle and copy it to the correct location.
-    # Assuming the VST3 is directly in the extracted payload or a common subdirectory.
-    # Common path for VST3 plugins is /Library/Audio/Plug-Ins/VST3/
-    # Homebrew installs to prefix, so we'll copy to prefix/"Library/Audio/Plug-Ins/VST3"
-    # and then symlink if necessary, but usually Homebrew handles the final location.
+    # Navigate into the extracted VST3 sub-package directory
+    # Extract the Payload from the VST3 sub-package
+    # The Payload is a gzipped cpio archive
+    cd "airwindows-consolidated_VST3.pkg" do
+      system "tar", "-xf", "Payload"
+    end
 
-    # Find the VST3 bundle within the extracted contents.
-    # This path might need adjustment based on the actual pkg structure.
-    vst3_plugin_path = "Airwindows.vst3" # This is a common name, might need to be more specific
+    # The VST3 plugin should now be extracted to the current directory (which is the buildpath)
+    # It's typically found in ./Library/Audio/Plug-Ins/VST3/
+    # Ensure the target directory exists within Homebrew's prefix
+    (prefix/"Library/Audio/Plug-Ins/VST3").mkpath
 
-    # Copy the VST3 plugin to the Homebrew prefix's VST3 directory
-    # Ensure the target directory exists
-    (lib/"vst3").mkpath
-    cp_r vst3_plugin_path, lib/"vst3"
+    # Copy the VST3 plugin bundle
+    # The VST3 bundle will be in the current directory (buildpath) after extracting Payload
+    # The path will be something like ./Library/Audio/Plug-Ins/VST3/Airwindows.vst3
+    cp_r "Library/Audio/Plug-Ins/VST3/Airwindows.vst3", prefix/"Library/Audio/Plug-Ins/VST3"
   end
 end
