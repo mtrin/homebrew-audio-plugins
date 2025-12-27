@@ -22,7 +22,18 @@ jobs:
 
       - name: Bump formulas
         run: |
-          brew bump-formula-pr --write-only --commit --no-audit mtrin/audio-plugins/airwindows-consolidated || true
+          FORMULA="mtrin/audio-plugins/airwindows-consolidated"
+
+          # Get latest version from livecheck
+          LATEST=$(brew livecheck --json "$FORMULA" | jq -r '.[0].version.latest')
+          CURRENT=$(brew livecheck --json "$FORMULA" | jq -r '.[0].version.current')
+
+          if [ "$LATEST" != "$CURRENT" ] && [ "$LATEST" != "null" ]; then
+            echo "Updating $FORMULA: $CURRENT → $LATEST"
+            brew bump-formula-pr --write-only --commit --no-audit --version="$LATEST" "$FORMULA"
+          else
+            echo "No update needed for $FORMULA"
+          fi
 
       - name: Push changes
         run: |
