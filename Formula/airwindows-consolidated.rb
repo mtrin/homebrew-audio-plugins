@@ -26,4 +26,14 @@ class AirwindowsConsolidated < Formula
       cp_r "Airwindows Consolidated.vst3", prefix/"Library/Audio/Plug-Ins/VST3"
     end
   end
+
+  def post_install
+    vst3_dir = Pathname("/Library/Audio/Plug-Ins/VST3")
+    vst3_dir.mkpath
+    ln_sf prefix/"Library/Audio/Plug-Ins/VST3/Airwindows Consolidated.vst3", vst3_dir
+  end
+
+  def post_uninstall
+    rm_f "/Library/Audio/Plug-Ins/VST3/Airwindows Consolidated.vst3"
+  end
 end
