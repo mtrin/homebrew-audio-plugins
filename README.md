@@ -31,13 +31,14 @@ brew livecheck mtrin/audio-plugins/airwindows-consolidated
 ### Manual bump
 
 ```bash
-brew bump --open-pr mtrin/audio-plugins/airwindows-consolidated
+brew bump-formula-pr --write-only --commit --no-audit mtrin/audio-plugins/airwindows-consolidated
+git -C $(brew --repo mtrin/audio-plugins) push
 ```
 
 This will:
 1. Detect new version via livecheck
 2. Download new release and calculate SHA256
-3. Update formula and create PR
+3. Update formula and commit
 
 ### Automated bumps
 
