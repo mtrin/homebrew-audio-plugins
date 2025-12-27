@@ -1,3 +1,6 @@
 [submodule "submodules/brew"]
 	path = submodules/brew
 	url = https://github.com/Homebrew/brew.git
+[submodule "submodules/homebrew-core"]
+	path = submodules/homebrew-core
+	url = https://github.com/Homebrew/homebrew-core.git
