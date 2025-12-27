@@ -6,7 +6,7 @@ class AirwindowsConsolidated < Formula
   sha256 "0fbae22d40b590f71fcc50e5c48379ad3b5ea01c8b73669c8f4dab66f4f83c64"
 
   livecheck do
-    url :url
+    url :homepage
     regex(/macOS[._-](\d{4}-\d{2}-\d{2})/i)
     strategy :github_releases do |json, regex|
       json.filter_map do |release|
