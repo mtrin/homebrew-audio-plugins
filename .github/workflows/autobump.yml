@@ -25,4 +25,4 @@ jobs:
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          brew bump --no-fork --open-pr --tap=mtrin/audio-plugins
+          brew bump --no-fork --no-pull-requests --tap=mtrin/audio-plugins
