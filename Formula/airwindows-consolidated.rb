@@ -1,9 +1,9 @@
 class AirwindowsConsolidated < Formula
   desc "Airwindows Consolidated macOS DAW Plugin"
   homepage "https://github.com/baconpaul/airwin2rack"
-  url "https://github.com/baconpaul/airwin2rack/releases/download/DAWPlugin/airwindows-consolidated-macOS-2025-06-21-5ea9f35.dmg"
-  version "2025-06-21-5ea9f35"
-  sha256 "0fbae22d40b590f71fcc50e5c48379ad3b5ea01c8b73669c8f4dab66f4f83c64"
+  url "https://github.com/baconpaul/airwin2rack/releases/download/DAWPlugin/airwindows-consolidated-macOS-2025-12-20-458cc00.dmg"
+  version "2025-12-20-458cc00"
+  sha256 "1459a556d07361cfdbd664a62928af19cf749e2232e6437c8b463eb1a48abbf2"
 
   livecheck do
     url :homepage
