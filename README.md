@@ -1,22 +1,22 @@
 # Audio Plugins
 
-Homebrew tap for macOS audio plugins (VST3, AU).
+Homebrew tap for macOS audio plugins (VST3).
 
 ## Install
 
 ```bash
 brew tap mtrin/audio-plugins
-brew install airwindows-consolidated
+brew install --cask airwindows-consolidated
 ```
 
 ## Update
 
 ```bash
 brew update
-brew upgrade airwindows-consolidated
+brew upgrade --cask airwindows-consolidated
 ```
 
-## Available Formulas
+## Available Casks
 
 - **airwindows-consolidated** - [Airwindows Consolidated](https://github.com/baconpaul/airwin2rack) DAW plugin
 
@@ -25,17 +25,17 @@ brew upgrade airwindows-consolidated
 ### Check for updates
 
 ```bash
-brew livecheck mtrin/audio-plugins/airwindows-consolidated
+brew livecheck --cask mtrin/audio-plugins/airwindows-consolidated
 ```
 
 ### Manual bump
 
 ```bash
 # Get latest version
-LATEST=$(brew livecheck --json mtrin/audio-plugins/airwindows-consolidated | jq -r '.[0].version.latest')
+LATEST=$(brew livecheck --cask --json mtrin/audio-plugins/airwindows-consolidated | jq -r '.[0].version.latest')
 
-# Update formula and commit
-brew bump-formula-pr --write-only --commit --no-audit --version="$LATEST" mtrin/audio-plugins/airwindows-consolidated
+# Update cask and commit
+brew bump-cask-pr --write-only --commit --no-audit --version="$LATEST" mtrin/audio-plugins/airwindows-consolidated
 
 # Push
 git -C $(brew --repo mtrin/audio-plugins) push

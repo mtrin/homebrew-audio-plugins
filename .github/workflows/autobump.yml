@@ -23,19 +23,19 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump formulas
+      - name: Bump casks
         run: |
-          FORMULA="mtrin/audio-plugins/airwindows-consolidated"
+          CASK="mtrin/audio-plugins/airwindows-consolidated"
 
           # Get latest version from livecheck
-          LATEST=$(brew livecheck --json "$FORMULA" | jq -r '.[0].version.latest')
-          CURRENT=$(brew livecheck --json "$FORMULA" | jq -r '.[0].version.current')
+          LATEST=$(brew livecheck --cask --json "$CASK" | jq -r '.[0].version.latest')
+          CURRENT=$(brew livecheck --cask --json "$CASK" | jq -r '.[0].version.current')
 
           if [ "$LATEST" != "$CURRENT" ] && [ "$LATEST" != "null" ]; then
-            echo "Updating $FORMULA: $CURRENT → $LATEST"
-            brew bump-formula-pr --write-only --commit --no-audit --version="$LATEST" "$FORMULA"
+            echo "Updating $CASK: $CURRENT → $LATEST"
+            brew bump-cask-pr --write-only --commit --no-audit --version="$LATEST" "$CASK"
           else
-            echo "No update needed for $FORMULA"
+            echo "No update needed for $CASK"
           fi
 
       - name: Push changes
