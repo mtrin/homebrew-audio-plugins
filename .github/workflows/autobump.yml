@@ -5,6 +5,10 @@ on:
     - cron: '0 9 * * 1'  # Weekly on Monday at 9am UTC
   workflow_dispatch:     # Manual trigger
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   autobump:
     runs-on: macos-latest
@@ -21,4 +25,4 @@ jobs:
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          brew bump --open-pr --tap=mtrin/audio-plugins
+          brew bump --no-fork --open-pr --tap=mtrin/audio-plugins
