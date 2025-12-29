@@ -19,6 +19,9 @@ cask "airwindows-consolidated" do
     end
   end
 
+  vst3_plugin "Airwindows Consolidated.vst3",
+              target: "/Library/Audio/Plug-Ins/VST3/Airwindows Consolidated.vst3"
+
   preflight do
     system_command "/usr/bin/xar",
                    args: ["-xf", "#{staged_path}/airwindows-consolidated-macOS-#{version}.pkg",
@@ -27,9 +30,6 @@ cask "airwindows-consolidated" do
                    args: ["-xf", "#{staged_path}/airwindows-consolidated_VST3.pkg/Payload",
                           "-C", staged_path]
   end
-
-  vst3_plugin "Airwindows Consolidated.vst3",
-              target: "/Library/Audio/Plug-Ins/VST3/Airwindows Consolidated.vst3"
 
   uninstall delete: "/Library/Audio/Plug-Ins/VST3/Airwindows Consolidated.vst3"
 end
