@@ -42,17 +42,17 @@ cask "airwindows-consolidated" do
     vst2_mount = staged_path/"vst2_mount"
     FileUtils.mkdir_p(vst2_mount)
     begin
-      system_command! "/usr/bin/hdiutil",
-                      args: ["attach", "#{staged_path}/SignedMacVSTs.dmg",
-                             "-nobrowse", "-readonly", "-noverify",
-                             "-mountpoint", vst2_mount]
+      system_command "/usr/bin/hdiutil",
+                     args: ["attach", "#{staged_path}/SignedMacVSTs.dmg",
+                            "-nobrowse", "-readonly", "-noverify",
+                            "-mountpoint", vst2_mount]
 
       # Create airwindows folder and copy contents
       FileUtils.mkdir_p("#{staged_path}/airwindows")
       FileUtils.cp_r(Dir["#{vst2_mount}/*.vst"], "#{staged_path}/airwindows/")
       FileUtils.cp_r(Dir["#{vst2_mount}/*.txt"], "#{staged_path}/airwindows/")
     ensure
-      system_command "/usr/bin/hdiutil", args: ["detach", vst2_mount]
+      system_command "/usr/bin/hdiutil", args: ["detach", vst2_mount], must_succeed: false
     end
   end
 
