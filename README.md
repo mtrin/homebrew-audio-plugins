@@ -1,6 +1,6 @@
 # Audio Plugins
 
-Homebrew tap for macOS audio plugins (VST3).
+Homebrew tap for macOS audio plugins (VST3, VST2).
 
 ## Install
 
@@ -18,7 +18,19 @@ brew upgrade --cask airwindows-consolidated
 
 ## Available Casks
 
-- **airwindows-consolidated** - [Airwindows Consolidated](https://github.com/baconpaul/airwin2rack) DAW plugin
+- **airwindows-consolidated** - [Airwindows Consolidated](https://github.com/baconpaul/airwin2rack) VST3 plugin + 478 standalone [Airwindows](https://www.airwindows.com/) VST2 plugins
+
+## Why Casks?
+
+Audio plugins install to system locations (`/Library/Audio/Plug-Ins/`) which require root privileges. Homebrew Formulas cannot use sudo by design, but Casks can request elevated permissions when installing to non-writable locations.
+
+### Plugin locations
+
+| Format | Location |
+|--------|----------|
+| VST3 | `/Library/Audio/Plug-Ins/VST3/` |
+| VST2 | `/Library/Audio/Plug-Ins/VST/` |
+| AU | `/Library/Audio/Plug-Ins/Components/` |
 
 ## Maintainer Notes
 
